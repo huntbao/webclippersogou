@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension>
+    <id>com.sogou.mknote</id>
+    <name>麦库记事·剪集</name>
+    <show_icon>true</show_icon>
+    <description>免费、快速剪辑内容至麦库记事(http://www.mknote.com)</description> 
+    <version>2.0</version>
+    <background page="background.html"></background>
+    <option page="options.html" width="800" height="600"></option>
+    <request_api_version>1</request_api_version>
+    <author>@mknote</author>
+    <content_scripts>
+        <content_script runat="document_complete" core_type="webkit">
+            <match>*://*/*</match>
+            <js>script/lib/jquery.min.js</js>
+            <js>script/chrome-to-sogou-bridge.js</js>
+            <js>script/maikuclipper.js</js>
+            <js>script/lib/extract-content.js</js>
+        </content_script>
+        <content_script runat="document_complete" core_type="webkit">
+            <match>*://*.douban.com/review/*</match>
+            <js>script/sites/douban.com.review.js</js>
+        </content_script>
+        <content_script runat="document_complete" core_type="webkit">
+            <match>*://weibo.com/*</match>
+            <match>*://*.weibo.com/*</match>
+            <js>script/sites/weibo.com.js</js>
+        </content_script>
+    </content_scripts>
+</extension>

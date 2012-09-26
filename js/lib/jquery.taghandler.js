@@ -232,7 +232,9 @@
     
                 // wraps the <ul> element in a div mainly for use in positioning
                 // the save button and loader image.
-                tagContainerObject.wrap('<div class="' + opts.className + '" />');
+                if(!tagContainerObject.parent().hasClass(opts.className)){
+                    tagContainerObject.wrap('<div class="' + opts.className + '" />');
+                }
     
                 // adds the the tag class to the tagContainer and creates the tag
                 // input field

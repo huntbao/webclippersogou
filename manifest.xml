@@ -10,7 +10,7 @@
     <request_api_version>1</request_api_version>
     <author>@mknote</author>
     <content_scripts>
-        <content_script runat="document_complete" core_type="webkit">
+        <content_script runat="document_complete">
             <match>*://*/*</match>
             <js>js/lib/jquery.min.js</js>
             <js>js/lib/extract-content.js</js>

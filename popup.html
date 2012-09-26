@@ -12,35 +12,65 @@
             </div>
         </div>
         <div class="popupwrap" id="popupwrap">
-            <div class="list-wrap" id="list-wrap">
 	    <div class="top">
-		<a href="http://note.sdo.com/my" title="前往我的麦库" class="logo" target="_blank"><img src="images/icons/19x19.png" alt="麦库记事" /></a>
-		<span class="main-menu-button"><span></span></span>
-		<ul class="main-menu">
-		    <!-- <li><a href="#options" class="option-page">设置选项</a></li> -->
-		    <li><a href="#help" class="help-button">帮助</a></li>
-		    <li><a href="http://lab.in.sdo.com/support/index.php" class="feedback" target="_blank">意见反馈</a></li>
-		    <li><a href="#logoff" class="logoff">注销</a></li>
-		</ul>
-		<input type="text" class="search" placeholder="搜索笔记" />
-		<div class="create-button">
+		<a href="http://note.sdo.com/my" class="logo" title="前往麦库记事" target="_blank">前往麦库记事</a>
+		<div class="create-button" id="create-button">
 		    <a href="#create" class="button create" id="create-note" title="新建笔记"><span>新建笔记</span></a>
 		    <a href="#clip" class="button clip" id="clip-note" title="保存页面内容"><span>保存页面内容</span></a>
 		</div>
+		<div class="view-action" id="view-action">
+                    <div class="clip-list" id="clip-list">
+                        <div class="now button"><span class="status">截取网页正文</span><span class="arrow"></span></div>
+                        <ul class="more">
+                            <li><a href="#" action="article">保存网页正文</a></li>
+                            <li><a href="#" action="page">保存完整网页</a></li>
+                            <li><a href="#" action="select">保存选择内容</a></li>
+                            <li><a href="#" action="pageurl" title="在光标处插入当前页面的地址">保存网页地址</a></li>
+                        </ul>
+                    </div>
+                    <a href="#back-to-list" title="保存并返回" class="button back" id="save-go-back"><span>保存并返回</span></a>
+                </div>
 	    </div>
-	    <div class="note-list-wrapper">
-		<ul class="note-list"></ul>
-		<div class="search-more">
-		    <a href="javascript:void(0);">查找更多笔记</a>
+            <div class="list-wrap" id="list-wrap">
+		<div class="note-list-wrapper">
+		    <ul class="note-list" id="note-list"></ul>
+		    <div class="search-more">
+			<a href="" id="search-more-notes" target="_blank" title="查看更多笔记">查看更多笔记</a>
+		    </div>
 		</div>
 	    </div>
-	</div>
+	    <div class="view-wrap" id="view-wrap">
+		<div class="view-wrap-con">
+		    <div class="title">
+			<input placeholder="笔记标题" id="titleinp" title="笔记标题"></input>
+		    </div>
+		    <div class="not-selectable mkbm-extra" id="mkbm-extra">
+			<div class="mkbm-category">
+			    <div class="mkbm-category-show" title=""><span>默认分类</span></div>
+			    <ul class="mkbm-category-select"></ul>
+			</div>
+			<div class="mkbm-tags">
+			    <div class="mkbm-taghandler">
+				<ul class="mkbm-tagHandler-init mkbm-taghandlerContainer">
+				</ul>
+			    </div>
+			</div>
+		    </div>
+		    <div class="notecontentwrap" id="notecontentwrap">
+			<div id="notecontent" contenteditable="true" class="notecontent"></div>
+		    </div>
+		</div>
+	    </div>
         </div>
+	<div class="status-bar" id="status-bar">
+	    <a class="username" id="username" title="您还未登录麦库" href="#" target="_blank">未登录</a>
+	    <span class="action-tip" id="action-tip"></span>
+	</div>
         <div id="cover" class="cover"></div>
-		<script src="js/lib/jquery.min.js"></script>
-		<script src="js/lib/jquery.taghandler.js"></script>
-		<script src="js/namespace.js"></script>
-		<script src="js/messages.js"></script>
-		<script src="js/popup.js"></script>
+	<script src="js/lib/jquery.min.js"></script>
+	<script src="js/lib/jquery.taghandler.js"></script>
+	<script src="js/namespace.js"></script>
+	<script src="js/messages.js"></script>
+	<script src="js/popup.js"></script>
     </body>
 </html>

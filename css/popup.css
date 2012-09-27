@@ -153,6 +153,9 @@ body{
 .not-login .login{
     margin: 0 10px 0 0;
 }
+.not-login a:link, .not-login a:visited, .not-login a:hover{
+    text-decoration: none;
+}
 .cover{
     background: rgba(0, 0, 0, 0.65);
     display: none;
@@ -186,12 +189,23 @@ body{
 }
 .popupwrap{
     height: 557px;
+    
+}
+.list-wrap{
+    display: none;
 }
 .note-list-wrapper{
     height:497px;
     padding:8px 5px;
     overflow-x:hidden;
     overflow-y:auto;
+}
+.loading-tip{
+    text-align: center;
+    margin-top:210px;
+    background: url(images/ajax-loader.gif) center center no-repeat;
+    padding-top:40px;
+    overflow: hidden;
 }
 .note-list{
     margin: 0;
@@ -406,6 +420,7 @@ body{
     border: 1px solid #cbcbcb;
     border-radius: 4px;
     background-color:#fff;
+    overflow: hidden;
 }
 .notecontentwrap .notecontent{
     resize:none;

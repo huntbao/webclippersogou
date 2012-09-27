@@ -6,7 +6,6 @@
     <description>打开麦库记事</description> 
     <version>2.0</version>
     <popup page="popup.html" width="450" height="582" />
-    <background page="background.html"></background>
     <request_api_version>1</request_api_version>
     <author>@mknote</author>
     <content_scripts>

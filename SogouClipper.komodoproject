@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Komodo Project File - DO NOT EDIT -->
 <project id="d3196a36-d37f-47d0-903b-91609107fc2f" kpf_version="5" name="SogouClipper.komodoproject">
+<preference-set idref="d3196a36-d37f-47d0-903b-91609107fc2f">
+  <boolean id="dedentOnColon">0</boolean>
+  <string id="editAutoIndentStyle">smart</string>
+  <boolean id="editBackspaceDedents">1</boolean>
+  <boolean id="editElectricBrace">1</boolean>
+  <boolean id="indentStringsAfterParens">0</boolean>
+  <long id="indentWidth">4</long>
+  <boolean id="showIndentationGuides">1</boolean>
+  <long id="tabWidth">4</long>
+  <boolean id="useSmartTabs">1</boolean>
+  <boolean id="useTabs">0</boolean>
+</preference-set>
 </project>

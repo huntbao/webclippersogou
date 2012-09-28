@@ -1,6 +1,6 @@
 ﻿window.MKNoteWebclipper.messages = {
     "baseUrl":{
-        "message":"http://notelocal.sdo.com",
+        "message":"http://notetest.sdo.com",
         "description":"main url of maiku"
     },
     "statisticsString":{

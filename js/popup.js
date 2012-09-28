@@ -58,7 +58,7 @@
 					str = '';
 					for(var i = 0, l = notes.length; i < l; i++){
 						if(notes[i].Encrypted) continue;
-						str += self._format(itemTpl, [notes[i].NoteID, notes[i].Title, self.getDate(notes[i].UpdateTime), (notes[i].Abstract === '' ? '<em><空笔记></em>' : notes[i].Abstract)]);
+						str += self.formatTpl(itemTpl, [notes[i].NoteID, notes[i].Title, self.getDate(notes[i].UpdateTime), (notes[i].Abstract === '' ? '<em><空笔记></em>' : notes[i].Abstract)]);
 					}
 					if(str !== ''){
 						self.noteList.html(str);
@@ -159,7 +159,13 @@
 					);
 				}else{
 					//clip note
-					self.getPageContent();
+					self.getPageContent(function(data){
+						hideEdit();
+						resetEdit(t);
+						self.getNoteById(data.Note.NoteID, function(data){
+							self.updateNote(data.note);
+						});	
+					});
 				}
 				return false;
 			});
@@ -305,14 +311,12 @@
             });
 			self.tagHandlerEl = tagHandlerEl;
         },
-		getPageContent: function(){
-			console.log('start saveing image....')
+		getPageContent: function(successCallback){
 			var self = this,
 			content = self.noteContent.html(),
 			imgs = self.noteContent.find('img'),
 			needReplaceImgs = [],
 			filteredImg = {},
-			filteredImgTitles = [],
 			title = self.noteTitle.val(),
 			sourceurl = self.saveBtn.data('sourceurl'),
 			tags = self.tagHandlerEl.tagHandler('getSerializedTags'),
@@ -327,20 +331,15 @@
 				if(!isToSave(src)) continue;
 				if(filteredImg[src]) continue;
 				filteredImg[src] = 1;
-				filteredImgTitles.push(img.title || img.alt || '');
 				needReplaceImgs.push(img);
 			}
 			if(needReplaceImgs.length === 0){
 				//no imgs, just save note
-				self.saveNote(title, sourceurl, content, tags, categoryId);
+				self.saveNote(title, sourceurl, content, tags, categoryId, '', 0, successCallback);
 				return;
 			}
 			self.saveImgs({
 			   imgs: imgs,
-			   imgTitles: filteredImgTitles,
-			   title: title,
-			   sourceurl: sourceurl,
-			   tags: tags,
 			   categoryId: categoryId
 			}, function(uploadedImageData, serializeSucceedImgIndexByOrder, noteId){
 				var realIndex, d;
@@ -352,10 +351,10 @@
 						delete serializeSucceedImgIndexByOrder[i];
 					}
 				}
-				self.saveNote(title, sourceurl, content, tags, categoryId, noteId);
+				self.saveNote(title, sourceurl, self.noteContent.html(), tags, categoryId, noteId, 0, successCallback);
 			}, function(){
 				//all images upload failed or serialize failed, just save the page
-				self.saveNote(title, sourceurl, content, tags, categoryId);
+				self.saveNote(title, sourceurl, content, tags, categoryId, '', 0, successCallback);
 			});
 			
 		},
@@ -363,16 +362,13 @@
 			var self = this,
             content = '',
             imgs = msg.imgs,
-            titles = msg.imgTitles,
-            saveNormalNote = function(){
-                for(var i = 0, l = imgs.length; i < l; i++){
-                    content += '<img src="' + imgs[i].src + '" title="' + titles[i] + '" alt="' + titles[i] + '"><br />';
-                }
-                self.saveNote(msg.title, msg.sourceurl, content, msg.tags, msg.categoryId);
+			totalImgNum = imgs.length,
+            titles = [];
+			for(var i = 0; i < totalImgNum; i++){
+                titles.push(self.getFileNameByUrl(imgs[i].src));
             }
 			self.notify(chrome.i18n.getMessage('isRetrievingRemoteImgTip'));
-			var totalImgNum = imgs.length,
-			serializeSucceedImgNum = 0,
+			var serializeSucceedImgNum = 0,
 			serializeFailedImgNum = 0,
 			serializeSucceedImgIndex = [],
 			serializeSucceedImgIndexByOrder = {},
@@ -386,13 +382,8 @@
 				if(serializeSucceedImgNum + serializeFailedImgNum == totalImgNum){
 					if(serializeFailedImgNum == totalImgNum){
 						//all images retrieve failed
-						if(failCallback){
-							//is replace images in page content
-							failCallback(true);
-						}else{
-							self.notify(chrome.i18n.getMessage('RetrieveImagesFailed'));
-							saveNormalNote();
-						}
+						//is replace images in page content
+						failCallback && failCallback();
 						return false;
 					}
 					for(var i = 0, l = serializeSucceedImgIndex.length; i < l; i++){
@@ -410,36 +401,18 @@
 								//todo: server error, pending note...
 								console.log('Internal error: ');
 								console.log(data.error);
-								if(failCallback){
-									failCallback(true);
-								}
+								failCallback && failCallback();
 								removeFiles();
 								return;
 							}
-							if(successCallback){
-								//is replace images in page content
-								successCallback(data, serializeSucceedImgIndexByOrder, data[0].NoteID);
-							}else{
-								var d, 
-								noteId = data[0].NoteID,
-								realIndex;
-								for(var i = 0, l = totalImgNum; i < l; i++){
-									realIndex = serializeSucceedImgIndexByOrder[i];
-									if(realIndex){
-										d = data[realIndex];
-										content += '<img src="' + d.Url + '" title="' + titles[i] + '" alt="' + titles[i] + '"><br />';
-										delete serializeSucceedImgIndexByOrder[i];
-									}else{
-										content += '<img src="' + imgs[i] + '" title="' + titles[i] + '" alt="' + titles[i] + '"><br />';
-									}
-								}
-								self.saveNote(msg.title, msg.sourceurl, content, msg.tags, '', noteId);
-							}
+							//is replace images in page content
+							successCallback && successCallback(data, serializeSucceedImgIndexByOrder, data[0].NoteID);
 							removeFiles();
 						},
 						error: function(jqXHR, textStatus, errorThrown){
 							console.log('xhr error: ')
 							console.log(textStatus)
+							failCallback && failCallback();
 							removeFiles();
 							self.notify(chrome.i18n.getMessage('UploadImagesFailed'));
 						}
@@ -465,80 +438,51 @@
 			}
 		},
 		getImageFile: function(image, fileName, index, successCallback){
-			console.log(image)
 			var self = this,
             canvas = document.createElement('canvas'),
             ctx = canvas.getContext('2d');
             canvas.width = image.width;
             canvas.height = image.height;
-            if(fileName.indexOf('.') == -1){
+            if(fileName.indexOf('.') === -1){
                 fileName += '.png';//default png format
             }
             var ext = fileName.split('.')[1];
             ctx.drawImage(image, 0, 0);
-            //var file = canvas.mozGetAsFile(fileName, 'image/' + ext);
-            //successCallback(file, index);
-			try{
-			var blog = self.dataURItoBlob(canvas.toDataURL('image/' + ext, 0.5));}catch(e){
-				console.log(e)
-			}
-			console.log(blob)
 			
-			//window.requestFileSystem(TEMPORARY, this.response.byteLength, function(fs){
-				//self.writeBlobAndSendFile(fs, blob, fileName, successCallback, errorCallback, imgIndex);
-			//}, self.onFileError);
+			var blob = self.dataURItoBlob(canvas.toDataURL('image/' + ext, 0.9));
+			window.requestFileSystem(TEMPORARY, blob.size, function(fs){
+				self.writeBlobAndSendFile(fs, blob, fileName, successCallback, index);
+			}, self.onFileError);
 		},
 		dataURItoBlob:function(dataURI){
-			var binary = atob(dataURI.split(',')[1]);
-			console.log(binary)
-			var array = [];
-			for(var i = 0; i < binary.length; i++) {
-				array.push(binary.charCodeAt(i));
+			// convert base64 to raw binary data held in a string
+			// doesn't handle URLEncoded DataURIs
+			var byteString;
+			if (dataURI.split(',')[0].indexOf('base64') >= 0) {
+				byteString = atob(dataURI.split(',')[1]);
+			} else {
+				byteString = unescape(dataURI.split(',')[1]);
 			}
-			console.log(array)
-			try{
-				var blog = new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
-			}catch(e){
-				console.log(e)
+			// separate out the mime component
+			var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+			// write the bytes of the string to an ArrayBuffer
+			var ab = new ArrayBuffer(byteString.length);
+			var ia = new Uint8Array(ab);
+			for (var i = 0; i < byteString.length; i++) {
+				ia[i] = byteString.charCodeAt(i);
 			}
-			
-			return;
+			// write the ArrayBuffer to a blob, and you're done
+			var BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder;
+			var bb = new BlobBuilder();
+			bb.append(ab);
+			return bb.getBlob(mimeString);
 		},
-		downloadImage: function(url, imgIndex, successCallback, errorCallback){
-            var self = this;
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
-            xhr.responseType = 'arraybuffer';
-            xhr.onload = function(e){
-                if (this.status == 200){
-                    var suffix = url.split('.');
-                    console.log(Blob)
-					var blob = new WebKitBlobBuilder([this.response], {type: 'image/' + suffix[suffix.length - 1]});
-					console.log(blob)
-                    var parts = url.split('/'),
-                    fileName = parts[parts.length - 1];
-					
-                    window.requestFileSystem(TEMPORARY, this.response.byteLength, function(fs){
-                        self.writeBlobAndSendFile(fs, blob, fileName, successCallback, errorCallback, imgIndex);
-                    }, self.onFileError);
-                }
-            }
-            xhr.onerror = function(){
-                console.log('retrieve remote image xhr onerror')
-                errorCallback && errorCallback(imgIndex);
-            }
-            xhr.onabort = function(){
-                console.log('retrieve remote image xhr onabort')
-                errorCallback && errorCallback(imgIndex);
-            }
-            xhr.send(null);
-        },
-		writeBlobAndSendFile: function(fs, blob, fileName, successCallback, errorCallback, imgIndex){
+		writeBlobAndSendFile: function(fs, blob, fileName, successCallback, imgIndex){
             var self = this;
             fs.root.getFile(fileName, {create: true}, function(fileEntry){
                 fileEntry.createWriter(function(fileWriter){
                     fileWriter.onwrite = function(e){
-                        console.log('Write completed.');
+                        //console.log('Write completed.');
                         fileEntry.file(function(file){
                             successCallback(file, imgIndex);
                         });
@@ -555,7 +499,7 @@
             window.requestFileSystem(TEMPORARY, fileSize, function(fs){
                 fs.root.getFile(fileName, {}, function(fileEntry){
                     fileEntry.remove(function() {
-                        console.log('File ' + fileName + ' removed.');
+                        //console.log('File ' + fileName + ' removed.');
                     }, self.onFileError);
                 }, self.onFileError);
             }, self.onFileError);
@@ -568,6 +512,11 @@
                 }
             }
         },
+		getFileNameByUrl: function(url){
+			var self = this,
+            parts = url.split('/');
+            return parts[parts.length -1];	
+		},
 		clipAction: function(actionType){
 			var self = this;
 			switch(actionType){
@@ -596,7 +545,7 @@
 					if(data.content === false || data.content === ''){
 						self.notify(chrome.i18n.getMessage('GetContentFailed'), true);
 					}else{
-						self.saveBtn.data('souceurl', data.sourceurl);
+						self.saveBtn.data('sourceurl', data.sourceurl);
 						self.noteTitle.val(data.title.trim());
 						self.noteContent.html(data.content.trim());
 					}
@@ -664,7 +613,7 @@
 				.find('.con').html((data.Abstract === '' ? '<em><空笔记></em>' : data.Abstract))
 			}else{
 				//add note
-				var newNote = $(self._format(self.itemTpl, [data.NoteID, data.Title, self.getDate(data.UpdateTime), (data.Abstract === '' ? '<em><空笔记></em>' : data.Abstract)]));
+				var newNote = $(self.formatTpl(self.itemTpl, [data.NoteID, data.Title, self.getDate(data.UpdateTime), (data.Abstract === '' ? '<em><空笔记></em>' : data.Abstract)]));
 				if(firstNote.length > 0){
 					newNote.insertBefore(firstNote);
 				}else{
@@ -750,7 +699,7 @@
 			finalTitle = finalTitle.trim();
 			return finalTitle.length > 0 ? finalTitle : '[未命名笔记]';
 		},
-		_format: function(str, arr){
+		formatTpl: function(str, arr){
             for(var i = 0, l = arr.length; i < l; i++){
                 str = str.replace('$' + i, arr[i]);
             }

@@ -1,0 +1,29 @@
+{
+  "keyboard_shortcut": "Ctrl+Shift+Down", 
+  "name": "MoveLineDown", 
+  "language": "JavaScript", 
+  "trigger_enabled": false, 
+  "value": [
+    "//Move Line Down", 
+    "komodo.assertMacroVersion(3);", 
+    "if (komodo.view) { komodo.view.setFocus() };", 
+    "var ke = komodo.editor;", 
+    "", 
+    "var startPos = ke.currentPos;", 
+    "", 
+    "var currentLine = ke.lineFromPosition( startPos );", 
+    "", 
+    "//we are at the last line", 
+    "if( currentLine == ( ke.lineCount - 1 ) )", 
+    "{", 
+    "    return;", 
+    "}", 
+    "", 
+    "komodo.doCommand( 'cmd_lineNext' );", 
+    "ke.lineTranspose();"
+  ], 
+  "trigger": "trigger_postopen", 
+  "rank": 100, 
+  "async": false, 
+  "type": "macro"
+}

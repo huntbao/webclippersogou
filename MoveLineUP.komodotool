@@ -1,0 +1,29 @@
+{
+  "keyboard_shortcut": "Ctrl+Shift+Up", 
+  "name": "MoveLineUP", 
+  "language": "JavaScript", 
+  "trigger_enabled": false, 
+  "value": [
+    "//Move Line Up", 
+    "komodo.assertMacroVersion(3);", 
+    "if (komodo.view) { komodo.view.setFocus() };", 
+    "var ke = komodo.editor;", 
+    "", 
+    "var startPos = ke.currentPos;", 
+    "", 
+    "var currentLine = ke.lineFromPosition( startPos );", 
+    "", 
+    "//we are at the last line", 
+    "if( currentLine == 0 )", 
+    "{", 
+    "    return;", 
+    "}", 
+    "", 
+    "ke.lineTranspose();", 
+    "komodo.doCommand( 'cmd_linePrevious' );"
+  ], 
+  "trigger": "trigger_postopen", 
+  "rank": 100, 
+  "async": false, 
+  "type": "macro"
+}

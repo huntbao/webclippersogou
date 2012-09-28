@@ -51,4 +51,8 @@
         "description": "is uploading images tip",
         "message": "\u6B63\u5728\u4E0A\u4F20\u56FE\u7247\u6587\u4EF6..."
     },
+    "IsSavingWaitTip":{
+        "description": "is uploading images tip",
+        "message": "\u6B63\u5728\u4FDD\u5B58\u7B14\u8BB0\uFF0C\u8BF7\u8010\u5FC3\u7B49\u5F85..."
+    }
 }

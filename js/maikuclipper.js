@@ -27,8 +27,9 @@
 					return;
 				}
 				if(request.msg === 'getpagecontent'){
+					var content = self.getHTMLByNode($(document.body));
 					sendResponse({
-						content: self.getHTMLByNode($(document.body)),
+						content: content,
 						sourceurl: self.getHref(),
 						title: self.getTitle()
 					});

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension>
     <id>com.sogou.mknote</id>
-    <name>麦库记事·剪集</name>
+    <name>麦库记事本</name>
     <show_icon>true</show_icon>
     <description>打开麦库记事</description> 
     <version>2.0</version>
     <popup page="popup.html" width="450" height="582" />
     <request_api_version>1</request_api_version>
     <author>@mknote</author>
+    <developer>@huntbao</developer>
     <content_scripts>
         <content_script runat="document_complete">
             <match>*://*/*</match>

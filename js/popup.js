@@ -128,9 +128,9 @@
 			self.tip = $('#action-tip');
 			var title = $('#titleinp'),
 			noteContent = $('#notecontent'),
-			resetEdit = function(saveBtn){
+			resetEdit = function(){
 				self.displayCateName.data('cateid', '');
-				saveBtn.data('noteid', '').data('sourceurl', '').data('importance', 0);
+				self.saveBtn.data('noteid', '').data('sourceurl', '').data('importance', 0);
 				title.val('');
 				noteContent.html('');
 				self.initTags([]);
@@ -139,6 +139,11 @@
 			self.noteContent = noteContent;
 			self.saveBtn = $('#save-go-back').click(function(){
 				var t = $(this);
+				if(self.isSavingNote){
+					self.notify(chrome.i18n.getMessage('IsSavingWaitTip'));
+					return false;
+				}
+				self.isSavingNote = true;
 				if(t.data('noteid')){
 					//eidt
 					self.saveNote(
@@ -151,7 +156,7 @@
 						t.data('importance'),
 						function(data){
 							hideEdit();
-							resetEdit(t);
+							resetEdit();
 							self.getNoteById(data.Note.NoteID, function(data){
 								self.updateNote(data.note);
 							});
@@ -161,7 +166,7 @@
 					//clip note
 					self.getPageContent(function(data){
 						hideEdit();
-						resetEdit(t);
+						resetEdit();
 						self.getNoteById(data.Note.NoteID, function(data){
 							self.updateNote(data.note);
 						});	
@@ -186,6 +191,11 @@
 				self.getNoteById(this.id, function(data){
 					initNoteEdit(data);
 				});
+			});
+			$('#cancel-to-list').click(function(){
+				hideEdit();
+				resetEdit();
+				return false;
 			});
 			self.setCategories();
 		},
@@ -447,7 +457,7 @@
                 fileName += '.png';//default png format
             }
             var ext = fileName.split('.')[1];
-            ctx.drawImage(image, 0, 0);
+            ctx.drawImage(image, 0, 0, image.width, image.height);
 			
 			var blob = self.dataURItoBlob(canvas.toDataURL('image/' + ext, 0.9));
 			window.requestFileSystem(TEMPORARY, blob.size, function(fs){
@@ -554,9 +564,9 @@
 		},
 		saveNote: function(title, sourceurl, notecontent, tags, categoryid, noteid, importance, successCallback, failCallback){
 			var self = this;
-			if(self.isSavingNote) return;
 			if(!title && !notecontent){
-				self.notify(chrome.i18n.getMessage('CannotSaveBlankNote'));
+				self.notify(chrome.i18n.getMessage('CannotSaveBlankNote'), true);
+				self.isSavingNote = false;
 				return;
 			}
 			var dataObj = {
@@ -568,8 +578,7 @@
 				noteid: noteid || '',
 				importance: importance || 0
 			}
-			self.notify(chrome.i18n.getMessage('IsSavingNote'), false);
-			self.isSavingNote = true;
+			self.notify(chrome.i18n.getMessage('IsSavingNote'));
 			$.ajax({
 				headers: {
 					'X-Requested-With': 'XMLHttpRequest'
@@ -654,9 +663,9 @@
 				}
 				$(this).html(info).fadeIn(function(){
 					if(autoHide){
-					self.notifyTimer = setTimeout(function(){
-						self.tip.fadeOut();
-					}, autoHide === true ? 3000 : autoHide);
+						self.notifyTimer = setTimeout(function(){
+							self.tip.fadeOut();
+						}, autoHide === true ? 3000 : autoHide);
 					}
 				});
 			});

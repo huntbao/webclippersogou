@@ -48,8 +48,8 @@ body{
     position:absolute;
     top:7px;
     right:5px;
-    height:24px;
-    line-height:24px;
+    height:30px;
+    line-height:30px;
     display: none;
 }
 .view-action .clip-list{
@@ -126,7 +126,16 @@ body{
     color: white;
     border-color: #7FB526;
     text-shadow: 0 1px 0 #77A32E;
+    line-height: 24px;
+    vertical-align: text-bottom;
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9AD139), color-stop(100%,#8CBC33));
+}
+.view-action .cancelbtn:link, .view-action .cancelbtn:visited{
+    text-decoration: none;
+    color: #81b205;
+}
+.view-action .cancelbtn:hover{
+    text-decoration: underline;
 }
 .not-login{
     background: #fff url(images/welcome.png) 0 30px no-repeat;
@@ -433,6 +442,7 @@ body{
 }
 .notecontentwrap .notecontent img{
     max-width:100%;
+    height: auto !important;
 }
 .notecontentwrap .notecontent p{
     margin: 5px 0;

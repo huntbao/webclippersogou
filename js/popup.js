@@ -114,14 +114,14 @@
             }
             createBtn.click(function(){
                 showEdit(function(){
-                    self.initTags(false);
+                    self.initTags([]);
                     title.focus();
                 });
             });
             $('#clip-note').click(function(){
                 showEdit(function(){
                     clipList.css('visibility', 'visible');
-                    self.initTags(false);
+                    self.initTags([]);
                     self.sendTabRequest('getarticle');
                 });
             });
@@ -133,7 +133,7 @@
                 self.saveBtn.data('noteid', '').data('sourceurl', '').data('importance', 0);
                 title.val('');
                 noteContent.html('');
-                self.initTags(false);
+                self.initTags([]);
             }
             self.noteTitle = title;
             self.noteContent = noteContent;
@@ -285,10 +285,6 @@
             }
         },
         initTags: function(tagsArr){
-            if(tagsArr === false){
-                this.tagHandlerEl.tagHandler('reset');
-                return;
-            }
             var self = this,
             tags = self.mkbmExtra.find('.mkbm-tags').html('<div class="mkbm-taghandler"><ul class="mkbm-tagHandler-init mkbm-taghandlerContainer"></ul></div>'),
 	    tagHandlerEl = tags.find('.mkbm-tagHandler-init'),

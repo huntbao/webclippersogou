@@ -202,9 +202,6 @@
                 currentTags.push($(e).text());
             });
             return currentTags;
-        },
-        reset: function(){
-            $(this).html('');
         }
     };
 

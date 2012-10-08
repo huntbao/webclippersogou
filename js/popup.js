@@ -114,14 +114,14 @@
             }
             createBtn.click(function(){
                 showEdit(function(){
-                    self.initTags([]);
+                    self.initTags(false);
                     title.focus();
                 });
             });
             $('#clip-note').click(function(){
                 showEdit(function(){
                     clipList.css('visibility', 'visible');
-                    self.initTags([]);
+                    self.initTags(false);
                     self.sendTabRequest('getarticle');
                 });
             });
@@ -133,7 +133,7 @@
                 self.saveBtn.data('noteid', '').data('sourceurl', '').data('importance', 0);
                 title.val('');
                 noteContent.html('');
-                self.initTags([]);
+                self.initTags(false);
             }
             self.noteTitle = title;
             self.noteContent = noteContent;
@@ -158,7 +158,7 @@
                             hideEdit();
                             resetEdit();
                             self.getNoteById(data.Note.NoteID, function(data){
-                                    self.updateNote(data.note);
+                                self.updateNote(data.note);
                             });
                         }
                     );
@@ -285,6 +285,10 @@
             }
         },
         initTags: function(tagsArr){
+            if(tagsArr === false){
+                this.tagHandlerEl.tagHandler('reset');
+                return;
+            }
             var self = this,
             tags = self.mkbmExtra.find('.mkbm-tags').html('<div class="mkbm-taghandler"><ul class="mkbm-tagHandler-init mkbm-taghandlerContainer"></ul></div>'),
 	    tagHandlerEl = tags.find('.mkbm-tagHandler-init'),
@@ -585,6 +589,7 @@
                 url: self.baseUrl + '/note/save',
                 data: JSON.stringify(dataObj),
                 success: function(data){
+                    self.isSavingNote = false;
                     if(data.error){
                         if(data.error == 'notlogin'){
                             self.notify(chrome.i18n.getMessage('NotLogin'));
@@ -596,7 +601,6 @@
                     }
                     self.notify(chrome.i18n.getMessage('SaveNoteSuccess'), true);
                     successCallback && successCallback(data);
-                    self.isSavingNote = false;
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     failCallback && failCallback();
@@ -609,6 +613,8 @@
             var self = this,
             note = $(document.getElementById(data.NoteID)),
             firstNote = $(self.noteList.children()[0]);
+            console.log(note.length)
+            console.log(firstNote)
             if(note.length > 0){
                 //update note
                 //moveto top

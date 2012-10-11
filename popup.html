@@ -16,31 +16,43 @@
 		<a href="http://note.sdo.com/my" class="logo" title="前往麦库记事" target="_blank">前往麦库记事</a>
 		<div class="create-button" id="create-button">
 		    <a href="#create" class="button create" id="create-note" title="新建笔记"><span>新建笔记</span></a>
-		    <a href="#clip" class="button clip" id="clip-note" title="保存页面内容"><span>保存页面内容</span></a>
-		</div>
-		<div class="view-action" id="view-action">
-		    <div class="clip-list" id="clip-list">
-                        <div class="now button"><span class="status">截取网页正文</span><span class="arrow"></span></div>
+		    <a href="#clip" class="button clip" id="clip-note" title="保存网页正文"><span>保存网页正文</span></a>
+                    <a href="#more" class="button moreclip" id="more-clip-options" title="更多选项"><span class="arrow"></span></a>
+                    <div class="clip-list" id="clip-list">
                         <ul class="more">
                             <li><a href="#" action="article">保存网页正文</a></li>
                             <li><a href="#" action="page">保存完整网页</a></li>
                             <li><a href="#" action="select">保存选择内容</a></li>
-                            <li><a href="#" action="pageurl" title="在光标处插入当前页面的地址">保存网页地址</a></li>
+                            <li><a href="#" action="pageurl" title="保存网页地址">保存网页地址</a></li>
                         </ul>
                     </div>
-                    <a href="#back-to-list" title="保存并返回" class="button back" id="save-go-back"><span>保存并返回</span></a>
-		    <a href="#cancel" title="返回笔记列表页" class="cancelbtn" id="cancel-to-list">取消</a>
+		</div>
+		<div class="view-action" id="view-action">
+		    <a href="#cancel" title="返回笔记列表页" class="button cancelbtn" id="cancel-to-list"><span>取消</span></a>
+                    <a href="#back-to-list" title="保存并返回" class="button button1 savebtn" id="save-go-back"><span>保存并返回</span></a>
+                    <a href="#edit" title="编辑笔记" class="button button1 editbtn" id="edit-note"><span>编辑</span></a>
                 </div>
 	    </div>
             <div class="list-wrap" id="list-wrap">
 		<div class="note-list-wrapper">
 		    <ul class="note-list" id="note-list"></ul>
 		    <div class="search-more">
-			<a href="" id="search-more-notes" target="_blank" title="查看更多笔记">查看更多笔记</a>
+			<a href="" id="search-more-notes" target="_blank" title="查看所有笔记">查看所有笔记</a>
 		    </div>
 		</div>
 	    </div>
-	    <div class="loading-tip" id="loading-tip">正在加载内容，请稍候 ...</div>
+	    <div class="loading-tip" id="loading-tip">正在加载笔记列表，请稍候 ...</div>
+            <div class="preview-wrap" id="preview-wrap">
+                <div class="preview-wrap-con">
+                    <div class="title-wrap">
+                        <h2 class="title"></h2>
+                        <a href="#" class="previewfull-btn" target="_blank" title="全屏打开"></a>
+                    </div>
+                    <div class="preview-notecontentwrap">
+			<div class="preview-notecontent"></div>
+		    </div>
+                </div>
+            </div>
 	    <div class="view-wrap" id="view-wrap">
 		<div class="view-wrap-con">
 		    <div class="title">

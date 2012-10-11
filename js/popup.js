@@ -73,27 +73,31 @@
         },
         initEvents: function(){
             var self = this;
+            self.currentMode = 'list';
             $('#username').html(self.userData.user.NickName).addClass('logined').attr('title', '您已登录麦库').attr('href', self.baseUrl);
             $('#search-more-notes').attr('href', self.baseUrl + '/my');
             var listWrap = $('#list-wrap'),
             viewWrap = $('#view-wrap'),
+            previewWrap = $('#preview-wrap'),
             createBtn = $('#create-button'),
             viewBtn = $('#view-action'),
-            clipList = $('#clip-list').click(function(){
+            moreClipOptions = $('#more-clip-options').click(function(){
                 clipDropList.show();
                 $(document).one('click', function(e){
                     clipDropList.hide();
                 });
-                return false;
+                return false;    
             }),
-            clipDropList = clipList.find('.more').delegate('li a', 'click', function(){
+            clipList = $('#clip-list'),
+            clipDropList = clipList.delegate('li a', 'click', function(){
                 var t = $(this);
                 clipDropList.hide();
-                clipOptionStatus.html(t.html());
-                self.clipAction(t.attr('action'));
+                showEdit(function(){
+                    self.initTags([]);
+                    self.clipAction(t.attr('action'));
+                });
                 return false;
             }),
-            clipOptionStatus = clipList.find('.status');
             showEdit = function(callback){
                 listWrap.hide();
                 viewWrap.show().animate({left: 0}, 200, function(){
@@ -101,6 +105,9 @@
                 });
                 createBtn.hide();
                 viewBtn.show();
+                editBtn.hide();
+                self.saveBtn.css('display', 'inline-block');
+                self.currentMode = 'edit';
             },
             hideEdit = function(callback){
                 listWrap.show();
@@ -110,8 +117,19 @@
                 });
                 createBtn.show();
                 viewBtn.hide();
-                clipList.css('visibility', 'hidden');
-            }
+                self.currentMode = 'list';
+            },
+            hidePreview = function(callback){
+                listWrap.show();
+                editBtn.hide();
+                previewWrap.animate({left: 500}, 200, function(){
+                    $(this).hide();
+                    callback && callback();
+                });
+                createBtn.show();
+                viewBtn.hide();
+                self.currentMode = 'list';
+            };
             createBtn.click(function(){
                 showEdit(function(){
                     self.initTags([]);
@@ -120,7 +138,6 @@
             });
             $('#clip-note').click(function(){
                 showEdit(function(){
-                    clipList.css('visibility', 'visible');
                     self.initTags([]);
                     self.sendTabRequest('getarticle');
                 });
@@ -174,10 +191,17 @@
                 }
                 return false;
             });
+            var editBtn = $('#edit-note').click(function(){
+                var _btn = $(this).hide();
+                initNoteEdit(_btn.data('notedata'));
+                self.saveBtn.css('display', 'inline-block');
+                self.currentMode = 'edit';
+                previewWrap.css('left', 500);
+            });
             var initNoteEdit = function(noteData){
                 showEdit(function(){
-                    $('#create-button').hide();
-                    $('#view-action').show();
+                    createBtn.hide();
+                    viewBtn.show();
                 });
                 self.saveBtn.data('noteid', noteData.note.NoteID)
                 .data('sourceurl', noteData.note.SourceUrl)
@@ -186,15 +210,31 @@
                 noteContent.html(noteData.note.Content);
                 self.displayCateName.html(self.getCatetoryById(noteData.note.CategoryID));
                 self.initTags(noteData.note.Tags);
+            },
+            initNotePreview = function(noteData){
+                listWrap.hide();
+                self.saveBtn.hide();
+                createBtn.hide();
+                viewBtn.show();
+                editBtn.css('display', 'inline-block').data('notedata', noteData);
+                previewWrap.show().animate({left: 0}, 200)
+                .find('.title').text(noteData.note.Title).end()
+                .find('.preview-notecontent').html(noteData.note.Content).end()
+                .find('.previewfull-btn').attr('href', self.baseUrl + '/note/previewfull/' + noteData.note.NoteID);
+                self.currentMode = 'preview';
             }
             self.noteList.delegate('.note-item', 'click', function(){
                 self.getNoteById(this.id, function(data){
-                    initNoteEdit(data);
+                    initNotePreview(data);
                 });
             });
             $('#cancel-to-list').click(function(){
-                hideEdit();
-                resetEdit();
+                if(self.currentMode === 'preview'){
+                    hidePreview();
+                }else{
+                    hideEdit();
+                    resetEdit();
+                }
                 return false;
             });
             self.setCategories();

@@ -63,7 +63,7 @@
                     if(str !== ''){
                         self.noteList.html(str);
                     }else{
-                        self.noteList.html('<p style="text-align:center">暂无笔记</p>');
+                        self.noteList.html('<li class="nonotetip"><p style="text-align:center">暂无笔记</p></li>');
                     }
                 },
                 error: function(){
@@ -326,18 +326,18 @@
         },
         initTags: function(tagsArr){
             var self = this;
+            var tags = self.mkbmExtra.find('.mkbm-tags');
             if(self.tagHandlerEl){
                 self.tagHandlerEl.tagme('destroy').tagme({
                     onAdd: function(){
                         tags.scrollTop(9999999);
                         return true;
                     },
-                    initTags: tagsArr    
+                    initTags: tagsArr
                 });
                 return true;
             }
-            var tags = self.mkbmExtra.find('.mkbm-tags'),
-	    tagHandlerEl = tags.find('.mkbm-tagme-container'),
+            var tagHandlerEl = tags.find('.mkbm-tagme-container'),
             tagsShowTimeout;
             tagHandlerEl.tagme({
                 onAdd: function(){
@@ -647,11 +647,10 @@
             });
         },
         updateNote: function(data){
-            var self = this,
-            note = $(document.getElementById(data.NoteID)),
+            var self = this;
+            self.noteList.find('.nonotetip').remove();
+            var note = $(document.getElementById(data.NoteID)),
             firstNote = $(self.noteList.children()[0]);
-            console.log(note.length)
-            console.log(firstNote)
             if(note.length > 0){
                 //update note
                 //moveto top

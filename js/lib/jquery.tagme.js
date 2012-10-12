@@ -63,7 +63,6 @@
                     tagInput = $('<input>', {class: 'tagme-input', placeholder: options.inputPlaceHolder}).keydown(function(e){
                         var code = e.which,
                         ti = $(this);
-                        console.log(code)
                         if(code === 13 || code === 188 || code === options.addKey.charCodeAt(0)){
                             checkAddTagValue($.trim(ti.val()));
                         }else if(code === 8 && ti.val() === ''){

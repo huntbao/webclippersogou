@@ -328,13 +328,7 @@
             var self = this;
             var tags = self.mkbmExtra.find('.mkbm-tags');
             if(self.tagHandlerEl){
-                self.tagHandlerEl.tagme('destroy').tagme({
-                    onAdd: function(){
-                        tags.scrollTop(9999999);
-                        return true;
-                    },
-                    initTags: tagsArr
-                });
+                self.tagHandlerEl.tagme('setTags', tagsArr, true);
                 return true;
             }
             var tagHandlerEl = tags.find('.mkbm-tagme-container'),
@@ -608,8 +602,11 @@
                 self.isSavingNote = false;
                 return;
             }
+            if(title === ''){
+                title = self.getTitleByText($.trim(notecontent));
+            }
             var dataObj = {
-                title: self.getTitleByText(title),
+                title: title,
                 sourceurl: sourceurl,
                 notecontent: notecontent,
                 tags: tags || '',

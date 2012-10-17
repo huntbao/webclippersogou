@@ -581,7 +581,11 @@
         },
         sendTabRequest: function(msg){
             var self = this;
-            self.notify(chrome.i18n.getMessage('GettingContent'), 10000);
+            self.notify(chrome.i18n.getMessage('GettingContent'), 11000);
+            self.sendTabRequestTimer = setTimeout(function(){
+                self.notify(chrome.i18n.getMessage('NoResponseFromPage'), 10000);
+                clearTimeout(self.sendTabRequestTimer);
+            },10000);
             chrome.tabs.getSelected(null, function(tab){
                 chrome.tabs.sendRequest(tab.id, {msg: msg}, function(data){
                     self.notify('');

@@ -33,7 +33,11 @@
     },
     "GetContentFailed":{
         "description": "get content from page failed",
-        "message": "\u65E0\u6709\u6548\u5185\u5BB9\u3002"
+        "message": "\u9875\u9762\u6CA1\u6709\u6B63\u6587\u54E6╮(╯_╰)╭\u5C1D\u8BD5\u4FDD\u5B58\u7F51\u9875\u5427"
+    },
+    "NoResponseFromPage":{
+        "description": "no response from page while send tab request",
+        "message": "\u65E0\u6CD5\u622A\u53D6\u5185\u5BB9\uFF0C\u82E5\u662F\u517C\u5BB9\u6A21\u5F0F\uFF0C\u8BF7\u5207\u6362\u5230\u9AD8\u901F\u6A21\u5F0F\uFF0C\u91CD\u65B0\u622A\u53D6"
     },
     "GettingContent":{
         "description": "getting content tip",

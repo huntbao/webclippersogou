@@ -537,6 +537,10 @@ body{
     position: absolute;
     right: 5px;
     top: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #eee;
+    padding: 0 4px;
+    border-radius: 3px;
 }
 .button{
     background: -moz-linear-gradient(top, #fafafa 0%, #eaeaea 100%);

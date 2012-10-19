@@ -493,6 +493,10 @@ body{
     padding:7px;
     overflow:auto;
 }
+.preview-wrap .preview-notecontent img{
+    max-width: 100%;
+    height: auto !important;
+}
 .search-more{
     text-align: right;
     margin-top: 8px;

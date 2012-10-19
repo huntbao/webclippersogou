@@ -581,13 +581,14 @@
         },
         sendTabRequest: function(msg){
             var self = this;
-            self.notify(chrome.i18n.getMessage('GettingContent'), 11000);
-            self.sendTabRequestTimer = setTimeout(function(){
-                self.notify(chrome.i18n.getMessage('NoResponseFromPage'), 10000);
-                clearTimeout(self.sendTabRequestTimer);
-            },10000);
             chrome.tabs.getSelected(null, function(tab){
+                self.notify(chrome.i18n.getMessage('GettingContent'), 11000);
+                self.sendTabRequestTimer = setTimeout(function(){
+                    self.notify(chrome.i18n.getMessage('NoResponseFromPage'), 10000);
+                    clearTimeout(self.sendTabRequestTimer);
+                },10000);
                 chrome.tabs.sendRequest(tab.id, {msg: msg}, function(data){
+                    clearTimeout(self.sendTabRequestTimer);
                     self.notify('');
                     if(data.content === false || data.content === ''){
                         self.notify(chrome.i18n.getMessage('GetContentFailed'), true);
